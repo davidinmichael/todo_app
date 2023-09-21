@@ -9,5 +9,6 @@ class TodoSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.title = validated_data.get("title", instance.title)
         instance.completed = validated_data.get("completed", instance.completed)
-        instance.save
+        instance.save()
         return instance
+    
