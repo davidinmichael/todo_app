@@ -1,3 +1,4 @@
+from operator import truediv
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -9,7 +10,7 @@ class TodoListCreate(APIView):
 
     def get(self, request):
         todos = Todo.objects.all()
-        serializer = TodoSerializer(todos)
+        serializer = TodoSerializer(todos, many=True)
         data = serializer.data
         return Response(data, status=status.HTTP_200_OK)
     
