@@ -1,4 +1,5 @@
 from operator import truediv
+import requests
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
@@ -51,3 +52,13 @@ class TodoUpdateDelete(APIView):
         todo.delete()
         message = {"message": "Todo deleted successfully"}
         return Response(message, status=status.HTTP_200_OK)
+
+class RandomUsers(APIView):
+    def get(self, request):
+        url = "https://randomuser.me/api/?results=1"
+        users = requests.get(url)
+        users_results = users["results"]["gender"]
+        print(users)
+        print(users_results)
+        return Response(users, status=status.HTTP_200_OK)
+    
