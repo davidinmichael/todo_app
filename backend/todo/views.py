@@ -55,10 +55,17 @@ class TodoUpdateDelete(APIView):
 
 class RandomUsers(APIView):
     def get(self, request):
-        url = "https://randomuser.me/api/?results=1"
-        users = requests.get(url)
-        users_results = users["results"]["gender"]
-        print(users)
-        print(users_results)
-        return Response(users, status=status.HTTP_200_OK)
+        url = "https://randomuser.me/api/?results=10"
+        response = requests.get(url)
+        users_results = response.json()
+        users = users_results["results"]
+        # users = users_results.get("results", [])
+        emails = [result["email"] for result in users]
+        new_domain = "@gmail.com"
+        # first_names = [result['name']['first'] for result in users]
+        results = [email.split("@")[0] + new_domain for email in emails]
+        data = {
+            "message": "You request is successfull",
+            "emails": results,}
+        return Response(data, status=status.HTTP_200_OK)
     
