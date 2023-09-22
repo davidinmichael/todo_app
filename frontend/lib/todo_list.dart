@@ -14,14 +14,17 @@ class _TodoState extends State<Todo> {
   List todos = [];
 
   void getTodo() async {
-    const url = "http://127.0.0.1:8000/todo";
+    print("Button Pressed");
+    const url = "https://davidinmichael.pythonanywhere.com/blog/";
+    print("Link Loading");
     final uri = Uri.parse(url);
     final response = await http.get(uri);
     final todo = jsonDecode(response.body);
-    print(todo);
+    print("Button Done");
+    print(response.statusCode);
 
     setState(() {
-      todos = todo;
+      todos = todo["results"];
     });
   }
 
@@ -41,6 +44,8 @@ class _TodoState extends State<Todo> {
           itemCount: todos.length,
           itemBuilder: ((context, index) {
             final todo = todos[index];
+            final todoTitle = todo["title"];
+            final todoContent = todo["content"];
             return Padding(
               padding: const EdgeInsets.all(20.0),
               child: Card(
@@ -48,17 +53,12 @@ class _TodoState extends State<Todo> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ListTile(
-                    title: Text(todo["title"]),
-                    leading: Checkbox(
-                      checkColor: Colors.orange,
-                      fillColor: MaterialStateProperty.all(Colors.black),
-                      value: todo["completed"],
-                      onChanged: (bool? value) {
-                        setState(() {
-                          todo["completed"] = value!;
-                        });
-                      },
-                    ),
+                    title: Text(todoTitle),
+                    subtitle: Text(todoContent),
+                    leading: IconButton(
+                      icon: Icon(Icons.more_vert),
+                    onPressed: () {},
+                ),
                   ),
                 ),
               ),
