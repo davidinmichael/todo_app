@@ -15,7 +15,8 @@ class _TodoState extends State<Todo> {
 
   void getTodo() async {
     print("Button Pressed");
-    const url = "https://davidinmichael.pythonanywhere.com/blog/";
+    // const url = "https://randomuser.me/api/?results=50";
+    const url = "https://davidinmichael.pythonanywhere.com/blog";
     print("Link Loading");
     final uri = Uri.parse(url);
     final response = await http.get(uri);
@@ -36,16 +37,13 @@ class _TodoState extends State<Todo> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: "Todo Lists",
-      home: Scaffold(
+    return Scaffold(
         body: ListView.builder(
           itemCount: todos.length,
           itemBuilder: ((context, index) {
             final todo = todos[index];
-            final todoTitle = todo["title"];
-            final todoContent = todo["content"];
+            final todoTitle = todo["author"];
+            final todoContent = todo["title"];
             return Padding(
               padding: const EdgeInsets.all(20.0),
               child: Card(
@@ -70,7 +68,6 @@ class _TodoState extends State<Todo> {
           onPressed: getTodo,
           child: Icon(Icons.add),
         ),
-      ),
     );
   }
 }
