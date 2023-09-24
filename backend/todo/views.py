@@ -53,19 +53,30 @@ class TodoUpdateDelete(APIView):
         message = {"message": "Todo deleted successfully"}
         return Response(message, status=status.HTTP_200_OK)
 
+# class RandomUsers(APIView):
+#     def get(self, request):
+#         url = "https://randomuser.me/api/?results=10"
+#         response = requests.get(url)
+#         users_results = response.json()
+#         users = users_results["results"]
+#         # users = users_results.get("results", [])
+#         emails = [result["email"] for result in users]
+#         new_domain = "@gmail.com"
+#         # first_names = [result['name']['first'] for result in users]
+#         results = [email.split("@")[0] + new_domain for email in emails]
+#         data = {
+#             "message": "You request is successfull",
+#             "emails": results,}
+#         return Response(data, status=status.HTTP_200_OK)
+
 class RandomUsers(APIView):
     def get(self, request):
-        url = "https://randomuser.me/api/?results=10"
+        url = "https://davidinmichael.pythonanywhere.com/blog/"
         response = requests.get(url)
-        users_results = response.json()
-        users = users_results["results"]
-        # users = users_results.get("results", [])
-        emails = [result["email"] for result in users]
-        new_domain = "@gmail.com"
-        # first_names = [result['name']['first'] for result in users]
-        results = [email.split("@")[0] + new_domain for email in emails]
+        blogs = response.json()
+        blog = blogs["results"]
         data = {
             "message": "You request is successfull",
-            "emails": results,}
+            "blogs": blog,}
         return Response(data, status=status.HTTP_200_OK)
     
