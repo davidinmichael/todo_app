@@ -13,21 +13,21 @@
 // class _TodoState extends State<Todo> {
 //   List todos = [];
 
-//   void getTodo() async {
-//     print("Button Pressed");
-//     // const url = "https://randomuser.me/api/?results=50";
-//     const url = "https://davidinmichael.pythonanywhere.com/blog";
-//     print("Link Loading");
-//     final uri = Uri.parse(url);
-//     final response = await http.get(uri);
-//     final todo = jsonDecode(response.body);
-//     print("Button Done");
-//     print(response.statusCode);
+  // void getTodo() async {
+  //   print("Button Pressed");
+  //   // const url = "https://randomuser.me/api/?results=50";
+  //   const url = "https://davidinmichael.pythonanywhere.com/blog";
+  //   print("Link Loading");
+  //   final uri = Uri.parse(url);
+  //   final response = await http.get(uri);
+  //   final todo = jsonDecode(response.body);
+  //   print("Button Done");
+  //   print(response.statusCode);
 
-//     setState(() {
-//       todos = todo["results"];
-//     });
-//   }
+  //   setState(() {
+  //     todos = todo["results"];
+  //   });
+  // }
 
 //   @override
 //   void initState() {
@@ -95,7 +95,7 @@ class _TodoState extends State<Todo> {
     };
     print("Button Pressed");
 // const url = "https://randomuser.me/api/?results=50";
-    const url = "https://davidinmichael.pythonanywhere.com/blog";
+    const url = "https://davidinmichael.pythonanywhere.com/blog/?format=json";
     print("Link Loading");
     final uri = Uri.parse(url);
     final response = await http.get(uri, headers: headers);
