@@ -10,6 +10,8 @@ class Todo extends StatefulWidget {
 }
 
 class _TodoState extends State<Todo> {
+  TextEditingController titleController = TextEditingController();
+
   List<Map<String, dynamic>> todos = [];
 
   void getTodo() async {
@@ -24,6 +26,21 @@ class _TodoState extends State<Todo> {
 
     setState(() {
       todos = List.from(todoList);
+    });
+  }
+
+  void addTodo() async {
+    const url = "http://127.0.0.1:8000/todo/";
+    final uri = Uri.parse(url);
+    final headers = {"content-type": "application/json"};
+    final body = jsonEncode({
+      "title": titleController.text,
+    });
+    final response = await http.post(uri, headers: headers, body: body);
+
+    setState(() {
+      getTodo();
+      Navigator.pop(context);
     });
   }
 
@@ -89,12 +106,37 @@ class _TodoState extends State<Todo> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: getTodo,
+        onPressed: () {
+          showTodo(addTodo, titleController);
+        },
         child: Icon(Icons.add),
       ),
     );
   }
-  void addTodo() {
-    
+
+  void showTodo(todoFunc, tcontroller) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            backgroundColor: Colors.orange,
+            title: Text("Add New Todo"),
+            content: TextField(
+              controller: tcontroller,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: todoFunc,
+                child: Text("Add"),
+              ),
+            ],
+          );
+        });
   }
 }

@@ -12,7 +12,7 @@ from .models import *
 class TodoListCreate(APIView):
 
     def get(self, request):
-        todos = Todo.objects.all()
+        todos = Todo.objects.all().order_by("-id")
         serializer = TodoSerializer(todos, many=True)
         data = serializer.data
         return Response(data, status=status.HTTP_200_OK)
