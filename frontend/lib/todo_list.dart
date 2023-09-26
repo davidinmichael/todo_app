@@ -1,111 +1,46 @@
-// import 'dart:convert';
-
-// import 'package:flutter/material.dart';
-// import 'package:http/http.dart' as http;
-
-// class Todo extends StatefulWidget {
-//   const Todo({super.key});
-
-//   @override
-//   State<Todo> createState() => _TodoState();
-// }
-
-// class _TodoState extends State<Todo> {
-//   List todos = [];
-
-  // void getTodo() async {
-  //   print("Button Pressed");
-  //   // const url = "https://randomuser.me/api/?results=50";
-  //   const url = "https://davidinmichael.pythonanywhere.com/blog";
-  //   print("Link Loading");
-  //   final uri = Uri.parse(url);
-  //   final response = await http.get(uri);
-  //   final todo = jsonDecode(response.body);
-  //   print("Button Done");
-  //   print(response.statusCode);
-
-  //   setState(() {
-  //     todos = todo["results"];
-  //   });
-  // }
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     getTodo();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//         body: ListView.builder(
-//           itemCount: todos.length,
-//           itemBuilder: ((context, index) {
-//             final todo = todos[index];
-//             final todoTitle = todo["title"];
-//             final todoContent = todo["author"];
-//             return Padding(
-//               padding: const EdgeInsets.all(20.0),
-//               child: Card(
-//                 elevation: 10,
-//                 child: Padding(
-//                   padding: const EdgeInsets.all(8.0),
-//                   child: ListTile(
-//                     title: Text(todoTitle),
-//                     subtitle: Text(todoContent),
-//                     leading: IconButton(
-//                       icon: Icon(Icons.more_vert),
-//                     onPressed: () {},
-//                 ),
-//                   ),
-//                 ),
-//               ),
-//             );
-//           }),
-//         ),
-//         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-//         floatingActionButton: FloatingActionButton(
-//           onPressed: getTodo,
-//           child: Icon(Icons.add),
-//         ),
-//     );
-//   }
-// }
-
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class Todo extends StatefulWidget {
-  const Todo({super.key});
+  const Todo({Key? key}) : super(key: key);
 
   @override
   State<Todo> createState() => _TodoState();
 }
 
 class _TodoState extends State<Todo> {
-  List todos = [];
+  List<Map<String, dynamic>> todos = [];
 
   void getTodo() async {
-    final headers = {
-      HttpHeaders.acceptHeader: 'application/json',
-      HttpHeaders.contentTypeHeader: 'application/json'
-    };
     print("Button Pressed");
-// const url = "https://randomuser.me/api/?results=50";
-    const url = "https://davidinmichael.pythonanywhere.com/blog/?format=json";
+    const url = "http://127.0.0.1:8000/todo/";
     print("Link Loading");
     final uri = Uri.parse(url);
-    final response = await http.get(uri, headers: headers);
-    final todo = jsonDecode(response.body);
+    final response = await http.get(uri);
+    final todoList = jsonDecode(response.body);
     print("Button Done");
     print(response.statusCode);
 
     setState(() {
-      todos = todo["results"];
+      todos = List.from(todoList);
     });
+  }
+
+  Future<void> updateTodoCompletion(int todoId, bool completed) async {
+    final url =
+        "http://127.0.0.1:8000/edit/$todoId/"; // Use the correct endpoint for updating a specific todo
+    final uri = Uri.parse(url);
+    final headers = {"content-type": "application/json"};
+    final body = jsonEncode({"completed": completed});
+
+    final response = await http.put(uri, headers: headers, body: body);
+
+    if (response.statusCode == 202) {
+      print("Todo updated successfully");
+    } else {
+      print("Failed to update todo");
+    }
   }
 
   @override
@@ -121,20 +56,30 @@ class _TodoState extends State<Todo> {
         itemCount: todos.length,
         itemBuilder: ((context, index) {
           final todo = todos[index];
-          final todoTitle = todo["title"];
-          final todoContent = todo["author"];
+          final title = todo["title"];
+          final dateAdded = todo["date_added"];
+          bool completed = todo["completed"];
+          int todoId = todo["id"];
+
           return Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(10.0),
             child: Card(
               elevation: 10,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ListTile(
-                  title: Text(todoTitle),
-                  subtitle: Text(todoContent),
-                  leading: IconButton(
-                    icon: Icon(Icons.more_vert),
-                    onPressed: () {},
+                  title: Text(title),
+                  subtitle: Text(dateAdded),
+                  trailing: Checkbox(
+                    checkColor: Colors.red,
+                    value: completed,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        completed = value!;
+                        updateTodoCompletion(todoId,
+                            completed); // Call the updateTodoCompletion function
+                      });
+                    },
                   ),
                 ),
               ),
@@ -148,5 +93,8 @@ class _TodoState extends State<Todo> {
         child: Icon(Icons.add),
       ),
     );
+  }
+  void addTodo() {
+    
   }
 }
