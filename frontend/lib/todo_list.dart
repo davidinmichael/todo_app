@@ -41,7 +41,15 @@ class _TodoState extends State<Todo> {
     setState(() {
       getTodo();
       Navigator.pop(context);
+      titleController.clear();
     });
+  }
+
+  void deleteFunc(int todoId) async {
+    final url = "http://127.0.0.1:8000/edit/$todoId/";
+    final uri = Uri.parse(url);
+    final headers = {"content-type": "application/json"};
+    final response = await http.delete(uri, headers: headers);
   }
 
   Future<void> updateTodoCompletion(int todoId, bool completed) async {
@@ -85,6 +93,12 @@ class _TodoState extends State<Todo> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ListTile(
+                  leading: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () {
+                      showDelete(todoId);
+                    },
+                  ),
                   title: Text(title),
                   subtitle: Text(dateAdded),
                   trailing: Checkbox(
@@ -134,6 +148,39 @@ class _TodoState extends State<Todo> {
               TextButton(
                 onPressed: todoFunc,
                 child: Text("Add"),
+              ),
+            ],
+          );
+        });
+  }
+
+  void showDelete(int todoId) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            backgroundColor: Colors.orange,
+            title: Text("Add New Todo"),
+            content: Text("Are you Sure you Want To Delete Todo?"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("No"),
+              ),
+              TextButton(
+                onPressed: () async {
+                  final url = "http://127.0.0.1:8000/edit/$todoId/";
+                  final uri = Uri.parse(url);
+                  final headers = {"content-type": "application/json"};
+                  final response = await http.delete(uri, headers: headers);
+                  setState(() {
+                    getTodo();
+                    Navigator.pop(context);
+                  });
+                },
+                child: Text("Yes"),
               ),
             ],
           );
